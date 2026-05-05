@@ -19,7 +19,6 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # 2. FUNCIÓN PARA CARGAR LOS DATOS (Lectura de marcas.csv)
-@st.cache_data
 def cargar_datos():
     try:
         # Forzamos la lectura con punto y coma (;) detectado en tu archivo
