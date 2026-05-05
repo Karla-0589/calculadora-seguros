@@ -8,14 +8,22 @@ st.set_page_config(page_title="Calculadora Inteligente", layout="centered")
 @st.cache_data
 def cargar_datos():
     try:
-        # Intenta leer el archivo
-        df = pd.read_csv("marcas.csv")
+        # Probamos leer con coma, y si falla, con punto y coma
+        try:
+            df = pd.read_csv("marcas.csv", sep=",")
+            if len(df.columns) < 2:
+                raise Exception()
+        except Exception:
+            df = pd.read_csv("marcas.csv", sep=";")
+
+        # Limpiamos espacios en blanco en los nombres de columnas
+        df.columns = df.columns.str.strip()
         return df
-    except Exception:
-        # Si falla, devuelve una lista básica para que no se bloquee la app
+
+    except Exception as e:
         return pd.DataFrame({
-            "Marca": ["Toyota", "Nissan"],
-            "Origen": ["Japonés", "Japonés"]
+            "Marca": ["Error al leer archivo"],
+            "Origen": ["Revisar formato"]
         })
 
 df_marcas = cargar_datos()
