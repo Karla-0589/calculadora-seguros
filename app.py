@@ -56,7 +56,7 @@ if marca_seleccionada != "":
     origen_detectado = df_marcas[df_marcas['Marca'] == marca_seleccionada]['Origen'].values[0]
     st.success(f"Origen detectado: **{origen_detectado}**")
 else:
-    origen_detectado = st.selectbox("O selecciona Origen manualmente", ["Americano", "Chino/Indio", "Coreano", "Europeo", "Japonés", "Otro"])
+    origen_detectado = st.selectbox("O selecciona Origen manualmente", ["Americano", "ChinoIndio", "Coreano", "Europeo", "Japones", "Otro"])
 
 # Entrada de Año
 anio = st.number_input("Año de fabricación", min_value=2000, max_value=2026, value=2025)
@@ -69,8 +69,8 @@ if st.button("Generar Estrategia"):
     if anio == 2026:
         resultado = "Ofrece 3 cuotas GRATIS (ver T&C)"
     
-    # REGLA 2: Chino/Indio o Europeo menor a 2026
-    elif str(origen_detectado).strip() in ["Chino/Indio", "Europeo"] and anio < 2026:
+    # REGLA 2: ChinoIndio o Europeo menor a 2026
+    elif str(origen_detectado).strip() in ["ChinoIndio", "Europeo"] and anio < 2026:
         resultado = "Ofrece 3 cuotas GRATIS (ver T&C)"
     
     # REGLA 1: Otros orígenes menores a 2026
