@@ -23,7 +23,7 @@ st.markdown("""
 def cargar_datos():
     try:
         # Forzamos la lectura con punto y coma (;) detectado en tu archivo
-        df = pd.read_csv('marcas.csv', sep=';')
+        df = pd.read_csv('marcas.csv', sep=',')
         
         # Limpiamos espacios y estandarizamos nombres de columnas
         df.columns = df.columns.str.strip()
