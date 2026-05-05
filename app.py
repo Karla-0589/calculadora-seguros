@@ -24,19 +24,23 @@ st.markdown("""
 @st.cache_data
 def cargar_datos():
     try:
-        # Probamos leer con coma y si falla, con punto y coma (común en Excel español)
-        try:
-            df = pd.read_csv('marcas.csv', sep=',')
-            if len(df.columns) < 2: raise Exception()
-        except:
-            df = pd.read_csv('marcas.csv', sep=';')
+        # Forzamos la lectura con punto y coma (;) que es lo que tiene tu archivo
+        df = pd.read_csv('marcas.csv', sep=';')
         
-        # Limpiamos espacios en blanco en los nombres de las columnas
+        # Limpiamos los nombres de las columnas por si acaso
         df.columns = df.columns.str.strip()
-        return df
-    except Exception:
-        # Lista de respaldo en caso de que el archivo no cargue
-        return pd.DataFrame({'Marca': ['Toyota', 'Nissan'], 'Origen': ['Japonés', 'Japonés']})
+        
+        # Verificamos que existan las columnas Marca y Origen
+        if 'Marca' in df.columns and 'Origen' in df.columns:
+            return df[['Marca', 'Origen']]
+        else:
+            # Si los nombres no coinciden, intentamos renombrarlas por posición
+            df.columns = ['Marca', 'Origen']
+            return df
+    except Exception as e:
+        # Si algo falla, mostramos el error en la app para saber qué es
+        st.error(f"Error al cargar: {e}")
+        return pd.DataFrame({'Marca': ['Toyota'], 'Origen': ['Japonés']})
 
 df_marcas = cargar_datos()
 
