@@ -1,15 +1,13 @@
 import streamlit as st
 import pandas as pd
 
-# Configuración de página para que se vea bien en celulares
+# 1. CONFIGURACIÓN DE PÁGINA
 st.set_page_config(page_title="Calculadora Inteligente", layout="centered")
 
-# Estilo personalizado para mejorar la visualización móvil
+# Estilo para mejorar la apariencia en móviles
 st.markdown("""
     <style>
-    .main {
-        background-color: #f5f7f9;
-    }
+    .main { background-color: #f5f7f9; }
     .stButton>button {
         width: 100%;
         border-radius: 10px;
@@ -20,70 +18,68 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 1. CARGA DE DATOS (Tu lista de 500 marcas)
+# 2. FUNCIÓN PARA CARGAR LOS DATOS (Lectura de marcas.csv)
 @st.cache_data
 def cargar_datos():
     try:
-        # Forzamos la lectura con punto y coma (;) que es lo que tiene tu archivo
+        # Forzamos la lectura con punto y coma (;) detectado en tu archivo
         df = pd.read_csv('marcas.csv', sep=';')
         
-        # Limpiamos los nombres de las columnas por si acaso
+        # Limpiamos espacios y estandarizamos nombres de columnas
         df.columns = df.columns.str.strip()
         
-        # Verificamos que existan las columnas Marca y Origen
-        if 'Marca' in df.columns and 'Origen' in df.columns:
-            return df[['Marca', 'Origen']]
-        else:
-            # Si los nombres no coinciden, intentamos renombrarlas por posición
-            df.columns = ['Marca', 'Origen']
-            return df
+        # Si las columnas no se llaman exactamente Marca/Origen, las renombramos por posición
+        if len(df.columns) >= 2:
+            df.columns = ['Marca', 'Origen'] + list(df.columns[2:])
+            
+        return df
     except Exception as e:
-        # Si algo falla, mostramos el error en la app para saber qué es
-        st.error(f"Error al cargar: {e}")
-        return pd.DataFrame({'Marca': ['Toyota'], 'Origen': ['Japonés']})
+        # Si falla, muestra el error en pantalla para diagnosticar
+        st.error(f"Aviso técnico: No se pudo leer el archivo completo. Error: {e}")
+        return pd.DataFrame({'Marca': ['Toyota', 'Nissan'], 'Origen': ['Japonés', 'Japonés']})
 
+# Ejecutamos la carga
 df_marcas = cargar_datos()
 
+# 3. INTERFAZ DE USUARIO
 st.title("🚗 Evaluador Automático")
-st.write("Selecciona la marca y los datos del vehículo.")
+st.write("Selecciona la marca para ver la estrategia comercial.")
 
-# --- INTERFAZ DE USUARIO ---
-# Buscador de Marca con autocompletado
-lista_marcas = sorted(df_marcas['Marca'].unique().tolist())
+# Buscador de Marcas
+lista_marcas = sorted(df_marcas['Marca'].dropna().unique().tolist())
 marca_seleccionada = st.selectbox("Busca o selecciona la Marca", [""] + lista_marcas)
 
-# Lógica de Autocompletado de Origen
+# Autocompletado de Origen
 origen_detectado = ""
 if marca_seleccionada != "":
-    # Buscamos el origen en el DataFrame
+    # Extraemos el origen correspondiente
     origen_detectado = df_marcas[df_marcas['Marca'] == marca_seleccionada]['Origen'].values[0]
     st.success(f"Origen detectado: **{origen_detectado}**")
 else:
-    # Si no hay marca seleccionada, permite elegir manualmente
     origen_detectado = st.selectbox("O selecciona Origen manualmente", ["Americano", "Chino/Indio", "Coreano", "Europeo", "Japonés", "Otro"])
 
-# Entrada de Año de fabricación
+# Entrada de Año
 anio = st.number_input("Año de fabricación", min_value=2000, max_value=2026, value=2025)
 
-# --- LÓGICA DE REGLAS DE NEGOCIO ---
+# 4. LÓGICA DE NEGOCIO
 if st.button("Generar Estrategia"):
-    recomendacion = ""
+    resultado = ""
     
-    # Regla 3: Si el año es 2026 (Máxima prioridad)
+    # REGLA 3: Año 2026 (Prioridad máxima)
     if anio == 2026:
-        recomendacion = "Ofrece 3 cuotas GRATIS (ver T&C)"
+        resultado = "Ofrece 3 cuotas GRATIS (ver T&C)"
     
-    # Regla 2: Si es Chino/Indio o Europeo y menor a 2026
-    elif origen_detectado in ["Chino/Indio", "Europeo"] and anio < 2026:
-        recomendacion = "Ofrece 3 cuotas GRATIS (ver T&C)"
+    # REGLA 2: Chino/Indio o Europeo menor a 2026
+    elif str(origen_detectado).strip() in ["Chino/Indio", "Europeo"] and anio < 2026:
+        resultado = "Ofrece 3 cuotas GRATIS (ver T&C)"
     
-    # Regla 1: Cualquier otro origen menor a 2026
+    # REGLA 1: Otros orígenes menores a 2026
     else:
-        recomendacion = "Ofrece 2 cuotas GRATIS (ver T&C)"
+        resultado = "Ofrece 2 cuotas GRATIS (ver T&C)"
     
-    # Visualización del resultado
+    # Mostrar el resultado final
     st.divider()
-    st.subheader("Resultado de la Estrategia:")
-    st.info(f"**{recomendacion}**")
-    st.markdown("**Adicional:** Hasta 20% de descuento")
-    st.warning("⚠️ Nota: El descuento afecta tu comisión")
+    st.subheader("Estrategia Recomendada:")
+    st.info(f"**{resultado}**")
+    st.markdown("🎯 **Bono adicional:** Hasta 20% de descuento.")
+    st.warning("⚠️ Nota: El descuento afecta la comisión del asesor.")
