@@ -65,9 +65,9 @@ anio = st.number_input("Año de fabricación", min_value=2000, max_value=2026, v
 st.divider()
 col1, col2 = st.columns(2)
 with col1:
-    prima_pacifico = st.number_input("Prima Anual Pacífico ($)", min_value=0.0, step=1.0, format="%.2f")
+    prima_pacifico = st.number_input("Prima Anual Pacífico ($)", min_value=0.0, step=1.0, format="%.0f")
 with col2:
-    prima_competencia = st.number_input("Prima Anual Competencia ($)", min_value=0.0, step=1.0, format="%.2f")
+    prima_competencia = st.number_input("Prima Anual Competencia ($)", min_value=0.0, step=1.0, format="%.0f")
 
 # 4. LÓGICA DE NEGOCIO
 if st.button("Generar Estrategia"):
@@ -94,9 +94,9 @@ if st.button("Generar Estrategia"):
     if anio == 2026:
         cuotas_texto = "Ofrece 2 cuotas GRATIS (ver T&C)"
     elif origen_clean in ["Chino / Indio", "Europeo"] and anio < 2026:
-        cuotas_texto = "Ofrece 3 cuotas GRATIS (ver T&C)"
-    else:
         cuotas_texto = "Ofrece 2 cuotas GRATIS (ver T&C)"
+    else:
+        cuotas_texto = "Ofrece 1 cuotas GRATIS (ver T&C)"
     
     # MOSTRAR RESULTADOS
     st.divider()
