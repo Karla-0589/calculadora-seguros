@@ -61,45 +61,54 @@ else:
 # Entrada de Año
 anio = st.number_input("Año de fabricación", min_value=2000, max_value=2026, value=2025)
 
-# --- NUEVAS VARIABLES (MARCADAS EN VERDE) ---
+# --- ENTRADA DE PRIMAS ---
 st.divider()
 col1, col2 = st.columns(2)
 with col1:
-    prima_competencia = st.number_input("Prima Anual Competencia ($)", min_value=0.0, step=1.0)
+    prima_pacifico = st.number_input("Prima Anual Pacífico ($)", min_value=0.0, step=1.0, format="%.2f")
 with col2:
-    prima_pacifico = st.number_input("Prima Anual Pacífico ($)", min_value=0.0, step=1.0)
+    prima_competencia = st.number_input("Prima Anual Competencia ($)", min_value=0.0, step=1.0, format="%.2f")
 
-# 4. LÓGICA DE NEGOCIO Y REGLAS ADICIONALES
+# 4. LÓGICA DE NEGOCIO
 if st.button("Generar Estrategia"):
-    # Cálculo de diferencia
-    diferencia = prima_pacifico - prima_competencia
+    # Cálculo de diferencia nominal
+    diferencia_monto = prima_pacifico - prima_competencia
     
-    # Cálculo de Descuento (Regla de la imagen: Diferencia - 3)
-    # Redondeado hacia arriba (math.ceil)
-    pct_descuento = math.ceil(diferencia - 3)
-    
-    # Aplicar Topes (Máximo 20% según tus notas anteriores)
-    if pct_descuento > 20: pct_descuento = 20
-    if pct_descuento < 0: pct_descuento = 0
-
-    # Lógica de Cuotas (Reglas originales)
-    resultado_cuotas = ""
-    if anio == 2026:
-        resultado_cuotas = "Ofrece 2 cuotas GRATIS (ver T&C)"
-    elif str(origen_detectado).strip() in ["Chino / Indio", "Europeo"] and anio < 2026:
-        resultado_cuotas = "Ofrece 2 cuotas GRATIS (ver T&C)"
+    # Cálculo de Porcentaje de Descuento (Fórmula solicitada)
+    if prima_pacifico > 0:
+        # (Prima Pacífico - Prima Competencia) / Prima Pacífico
+        porcentaje_calculado = (diferencia_monto / prima_pacifico) * 100
+        # Redondeo hacia arriba sin decimales
+        pct_final = math.ceil(porcentaje_calculado)
     else:
-        resultado_cuotas = "Ofrece 1 cuotas GRATIS (ver T&C)"
+        pct_final = 0
+
+    # Aplicar Topes (0% a 20%)
+    if pct_final > 20: pct_final = 20
+    if pct_final < 0: pct_final = 0
+
+    # Lógica de Cuotas Gratis
+    cuotas_texto = ""
+    origen_clean = str(origen_detectado).strip()
     
-    # RESULTADOS FINALES
+    if anio == 2026:
+        cuotas_texto = "Ofrece 2 cuotas GRATIS (ver T&C)"
+    elif origen_clean in ["Chino / Indio", "Europeo"] and anio < 2026:
+        cuotas_texto = "Ofrece 3 cuotas GRATIS (ver T&C)"
+    else:
+        cuotas_texto = "Ofrece 2 cuotas GRATIS (ver T&C)"
+    
+    # MOSTRAR RESULTADOS
     st.divider()
-    st.subheader("Estrategia Recomendada:")
+    st.subheader("Estrategia Final:")
     
-    # Mostrar diferencia y descuento
-    st.metric(label="Diferencia de Primas", value=f"${diferencia:,.2f}")
+    # Mostrar la diferencia en dólares
+    st.metric(label="Diferencia detectada", value=f"${diferencia_monto:,.2f}")
     
-    st.info(f"**{resultado_cuotas}**")
+    # Resultado de cuotas
+    st.info(f"📅 **{cuotas_texto}**")
     
-    st.success(f"🎯 **Descuento sugerido: {pct_descuento}%**")
+    # Resultado de descuento
+    st.success(f"🎯 **Descuento a aplicar: {pct_final}%**")
     
-    st.warning("⚠️ Nota: El descuento afecta la comisión del asesor.")
+    st.warning("⚠️ Nota: El descuento afecta directamente la comisión del asesor.")
