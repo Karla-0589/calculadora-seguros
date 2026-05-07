@@ -72,7 +72,7 @@ with col2:
 # 4. LÓGICA DE NEGOCIO Y REGLAS ADICIONALES
 if st.button("Generar Estrategia"):
     # Cálculo de diferencia
-    diferencia = prima_competencia - prima_pacifico
+    diferencia = prima_pacifico - prima_competencia
     
     # Cálculo de Descuento (Regla de la imagen: Diferencia - 3)
     # Redondeado hacia arriba (math.ceil)
