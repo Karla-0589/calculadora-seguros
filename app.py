@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import math
 
 # 1. CONFIGURACIÓN DE PÁGINA
 st.set_page_config(page_title="Calculadora Inteligente", layout="centered")
@@ -60,25 +61,45 @@ else:
 # Entrada de Año
 anio = st.number_input("Año de fabricación", min_value=2000, max_value=2026, value=2025)
 
-# 4. LÓGICA DE NEGOCIO
+# --- NUEVAS VARIABLES (MARCADAS EN VERDE) ---
+st.divider()
+col1, col2 = st.columns(2)
+with col1:
+    prima_pacifico = st.number_input("Prima Pacífico ($)", min_value=0.0, step=1.0)
+with col2:
+    prima_competencia = st.number_input("Prima Competencia ($)", min_value=0.0, step=1.0)
+
+# 4. LÓGICA DE NEGOCIO Y REGLAS ADICIONALES
 if st.button("Generar Estrategia"):
-    resultado = ""
+    # Cálculo de diferencia
+    diferencia = prima_competencia - prima_pacifico
     
-    # REGLA 3: Año 2026 (Prioridad máxima)
+    # Cálculo de Descuento (Regla de la imagen: Diferencia - 3)
+    # Redondeado hacia arriba (math.ceil)
+    pct_descuento = math.ceil(diferencia - 3)
+    
+    # Aplicar Topes (Máximo 20% según tus notas anteriores)
+    if pct_descuento > 20: pct_descuento = 20
+    if pct_descuento < 0: pct_descuento = 0
+
+    # Lógica de Cuotas (Reglas originales)
+    resultado_cuotas = ""
     if anio == 2026:
-        resultado = "Ofrece 3 cuotas GRATIS (ver T&C)"
-    
-    # REGLA 2: ChinoIndio o Europeo menor a 2026
+        resultado_cuotas = "Ofrece 2 cuotas GRATIS (ver T&C)"
     elif str(origen_detectado).strip() in ["Chino / Indio", "Europeo"] and anio < 2026:
-        resultado = "Ofrece 3 cuotas GRATIS (ver T&C)"
-    
-    # REGLA 1: Otros orígenes menores a 2026
+        resultado_cuotas = "Ofrece 2 cuotas GRATIS (ver T&C)"
     else:
-        resultado = "Ofrece 2 cuotas GRATIS (ver T&C)"
+        resultado_cuotas = "Ofrece 1 cuotas GRATIS (ver T&C)"
     
-    # Mostrar el resultado final
+    # RESULTADOS FINALES
     st.divider()
     st.subheader("Estrategia Recomendada:")
-    st.info(f"**{resultado}**")
-    st.markdown("🎯 **Bono adicional:** Hasta 20% de descuento.")
+    
+    # Mostrar diferencia y descuento
+    st.metric(label="Diferencia de Primas", value=f"${diferencia:,.2f}")
+    
+    st.info(f"**{resultado_cuotas}**")
+    
+    st.success(f"🎯 **Descuento sugerido: {pct_descuento}%**")
+    
     st.warning("⚠️ Nota: El descuento afecta la comisión del asesor.")
