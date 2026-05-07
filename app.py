@@ -100,13 +100,15 @@ if st.button("Generar Estrategia"):
     
     # MOSTRAR RESULTADOS
     st.divider()
-    st.subheader("Estrategia Final:")
+    st.subheader("Estrategia Inicial:")
     
     # Mostrar la diferencia en dólares
     st.metric(label="Diferencia detectada", value=f"${diferencia_monto:,.2f}")
     
     # Resultado de cuotas
     st.info(f"📅 **{cuotas_texto}**")
+
+    st.write("### Recomendación final:")
     
     # Resultado de descuento
     st.success(f"🎯 **Descuento a aplicar: {pct_final}%**")
