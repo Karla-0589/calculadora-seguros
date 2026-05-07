@@ -94,9 +94,9 @@ if st.button("Generar Estrategia"):
     
     # 1. Cuotas a ofrecer (Franja azul con el texto solicitado en una nueva línea)
     st.info(f"""
-        📅 **Ofrece {num_cuotas} cuota(s) GRATIS (ver T&C)** 
-        Esto representa {calculo_tyc:.1f}%
-    """)
+        📅 **Ofrece {num_cuotas} cuota(s) GRATIS (ver T&C)**\n" 
+        f"Esto representa {calculo_tyc:.1f}% de la prima"
+    )
     
     # 2. Diferencia detectada debajo de la franja azul
     st.metric(label="Diferencia detectada", value=f"${diferencia_monto:,.2f}")
