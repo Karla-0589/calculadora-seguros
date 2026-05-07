@@ -96,21 +96,28 @@ if st.button("Generar Estrategia"):
     elif origen_clean in ["Chino / Indio", "Europeo"] and anio < 2026:
         cuotas_texto = "Ofrece 2 cuotas GRATIS (ver T&C)"
     else:
-        cuotas_texto = "Ofrece 1 cuotas GRATIS (ver T&C)"
+        cuotas_texto = "Ofrece 1 cuota GRATIS (ver T&C)"
+        
+    # Cálculo para el texto de la franja azul: ((Prima/12) * num_cuotas) / Prima Anual
+    if prima_pacifico > 0:
+        calculo_tyc = ((prima_pacifico / 12) * num_cuotas) / prima_pacifico * 100
+    else:
+        calculo_tyc = 0.0
     
     # MOSTRAR RESULTADOS
     st.divider()
     st.subheader("Estrategia Inicial:")
     
-    # Mostrar la diferencia en dólares
+    # 1. Cuotas a ofrecer (Franja azul con el texto solicitado en una nueva línea)
+    st.info(f"""
+        📅 **Ofrece {num_cuotas} cuotas GRATIS (ver T&C)** Esto representa {calculo_tyc:.1f}%
+    """)
+    
+    # 2. Diferencia detectada debajo de la franja azul
     st.metric(label="Diferencia detectada", value=f"${diferencia_monto:,.2f}")
     
-    # Resultado de cuotas
-    st.info(f"📅 **{cuotas_texto}**")
-
+    # 3. Recomendación final
     st.write("### Recomendación final:")
+    st.write(f"**Posible descuento adicional: {pct_final}%**")
     
-    # Resultado de descuento
-    st.success(f"🎯 **Descuento a aplicar: {pct_final}%**")
-    
-    st.warning("⚠️ Nota: El descuento afecta directamente la comisión del asesor.")
+    st.warning("⚠️ Nota: El descuento afecta directamente tú comisión.")
