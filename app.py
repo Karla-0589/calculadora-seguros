@@ -65,9 +65,9 @@ anio = st.number_input("Año de fabricación", min_value=2000, max_value=2026, v
 st.divider()
 col1, col2 = st.columns(2)
 with col1:
-    prima_pacifico = st.number_input("Prima Pacífico ($)", min_value=0.0, step=1.0)
+    prima_competencia = st.number_input("Prima Anual Competencia ($)", min_value=0.0, step=1.0)
 with col2:
-    prima_competencia = st.number_input("Prima Competencia ($)", min_value=0.0, step=1.0)
+    prima_pacifico = st.number_input("Prima Anual Pacífico ($)", min_value=0.0, step=1.0)
 
 # 4. LÓGICA DE NEGOCIO Y REGLAS ADICIONALES
 if st.button("Generar Estrategia"):
