@@ -52,9 +52,9 @@ anio = st.number_input("Año de fabricación", min_value=2000, max_value=2026, v
 st.divider()
 col1, col2 = st.columns(2)
 with col1:
-    prima_pacifico = st.number_input("Prima Pacífico ($)", min_value=0.0, step=1.0, format="%.2f")
+    prima_pacifico = st.number_input("Prima Anual Pacífico ($)", min_value=0.0, step=1.0, format="%.0f")
 with col2:
-    prima_competencia = st.number_input("Prima Competencia ($)", min_value=0.0, step=1.0, format="%.2f")
+    prima_competencia = st.number_input("Prima Anual Competencia ($)", min_value=0.0, step=1.0, format="%.0f")
 
 # 4. LÓGICA DE NEGOCIO
 if st.button("Generar Estrategia"):
@@ -78,9 +78,9 @@ if st.button("Generar Estrategia"):
     if anio == 2026:
         num_cuotas = 2
     elif origen_clean in ["Chino / Indio", "Europeo"] and anio < 2026:
-        num_cuotas = 3
-    else:
         num_cuotas = 2
+    else:
+        num_cuotas = 1
     
     # Cálculo para el texto de la franja azul: ((Prima/12) * num_cuotas) / Prima Anual
     if prima_pacifico > 0:
@@ -90,11 +90,12 @@ if st.button("Generar Estrategia"):
 
     # MOSTRAR RESULTADOS
     st.divider()
-    st.subheader("Estrategia Final:")
+    st.subheader("Estrategia Inicial:")
     
     # 1. Cuotas a ofrecer (Franja azul con el texto solicitado en una nueva línea)
     st.info(f"""
-        📅 **Ofrece {num_cuotas} cuotas GRATIS (ver T&C)** Esto representa {calculo_tyc:.1f}%
+        📅 **Ofrece {num_cuotas} cuota(s) GRATIS (ver T&C)** 
+        Esto representa {calculo_tyc:.1f}%
     """)
     
     # 2. Diferencia detectada debajo de la franja azul
