@@ -114,13 +114,20 @@ if "resultados" in st.session_state:
         📅 **Ofrece {res['num_cuotas']} cuotas GRATIS (ver T&C)** Esto representa {res['calculo_tyc']:.1f}%
     """)
     
-    # Inyección de estilo CSS exclusivo para el segundo botón (Color Magenta / Fuchsia)
+    # Inyección de estilo CSS exclusiva para el segundo botón (Color Magenta)
     st.markdown("""
         <style>
-        div.stButton > button:first-child[key="btn_cierre"] {
+        /* Busca el segundo botón de la página y lo pinta de magenta */
+        div.stButton:nth-of-type(2) > button {
             background-color: #d63384 !important;
             color: white !important;
-            border-color: #d63384 !important;
+            border: 1px solid #d63384 !important;
+        }
+        /* Efecto al pasar el mouse por encima */
+        div.stButton:nth-of-type(2) > button:hover {
+            background-color: #b8256f !important;
+            border-color: #b8256f !important;
+            color: white !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -129,7 +136,7 @@ if "resultados" in st.session_state:
     if st.button("¿Aún no cierras?", key="btn_cierre"):
         st.session_state.mostrar_cierre = True
 
-    # 3. Sección desplegable (Aparece estrictamente al dar clic en el botón magenta)
+    # 3. Sección desplegable (Aparece al dar clic en el botón magenta)
     if st.session_state.mostrar_cierre:
         # Diferencia detectada debajo de la franja azul
         st.metric(label="Diferencia detectada", value=f"${res['diferencia_monto']:,.2f}")
