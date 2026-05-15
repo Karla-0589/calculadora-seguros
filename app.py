@@ -107,23 +107,38 @@ if "resultados" in st.session_state:
     res = st.session_state.resultados
     
     st.divider()
-    st.subheader("Estrategia Inicial:")
+    st.subheader("Estrategia Final:")
     
-    # 1. Solo la franja azul inicial
+    # 1. Franja azul inicial con las cuotas y el porcentaje
     st.info(f"""
-        📅 **Ofrece {res['num_cuotas']} cuotas GRATIS (ver T&C)** Esto representa {res['calculo_tyc']:.1f}%
+        📅 **Ofrece {res['num_cuotas']} cuotas GRATIS** Esto representa {res['calculo_tyc']:.1f}%
     """)
     
-    # Inyección de estilo CSS exclusiva para el segundo botón (Color Magenta)
+    # --- NUEVA VENTANA EMERGENTE (POPOVER) PARA T&C ---
+    with st.popover("📄 Ver Términos y Condiciones (T&C)"):
+        st.markdown("**Aplica para:**")
+        st.markdown("""
+        - Plan Full
+        - Débito automático
+        - Fraccionamiento 12 cuotas
+        - Edad del asegurado mayor o igual a 31 años
+        - Uso particular
+        - Cliente persona (DNI/CE)
+        """)
+        # Hipervínculo directo a la web de Pacífico
+        st.markdown("Si quieres ver los T&C completos da clic [aquí](https://www.pacificoseguros.com)")
+
+    st.write("") # Espacio visual en blanco
+
+    # Inyección de estilo CSS exclusiva para el botón Magenta
     st.markdown("""
         <style>
-        /* Busca el segundo botón de la página y lo pinta de magenta */
+        /* Busca el botón de cierre (que ahora es el tercer elemento de botón de la página) */
         div.stButton:nth-of-type(2) > button {
             background-color: #d63384 !important;
             color: white !important;
             border: 1px solid #d63384 !important;
         }
-        /* Efecto al pasar el mouse por encima */
         div.stButton:nth-of-type(2) > button:hover {
             background-color: #b8256f !important;
             border-color: #b8256f !important;
@@ -132,7 +147,7 @@ if "resultados" in st.session_state:
         </style>
     """, unsafe_allow_html=True)
     
-    # 2. El nuevo botón Magenta debajo de la franja azul
+    # 2. El botón Magenta debajo del bloque de T&C
     if st.button("¿Aún no cierras?", key="btn_cierre"):
         st.session_state.mostrar_cierre = True
 
