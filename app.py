@@ -56,8 +56,14 @@ with col1:
 with col2:
     prima_competencia = st.number_input("Prima Anual Competencia ($)", min_value=0.0, step=1.0, format="%.0f")
 
-# 4. LÓGICA DE NEGOCIO
+# 4. LÓGICA DE NEGOCIO Y DESPLIEGUE DE RESULTADOS
+if "mostrar_cierre" not in st.session_state:
+    st.session_state.mostrar_cierre = False
+
 if st.button("Generar Estrategia"):
+    # Forzamos que se oculte la segunda sección al recalcular una nueva estrategia
+    st.session_state.mostrar_cierre = False 
+
     # Cálculos de diferencia y posible descuento
     diferencia_monto = prima_pacifico - prima_competencia
     
@@ -88,23 +94,49 @@ if st.button("Generar Estrategia"):
     else:
         calculo_tyc = 0.0
 
-    # MOSTRAR RESULTADOS
+    # Guardamos los resultados en el estado para mantenerlos visibles
+    st.session_state.resultados = {
+        "num_cuotas": num_cuotas,
+        "calculo_tyc": calculo_tyc,
+        "diferencia_monto": diferencia_monto,
+        "pct_final": pct_final
+    }
+
+# Si ya se generó una estrategia, mostramos las secciones correspondientes
+if "resultados" in st.session_state:
+    res = st.session_state.resultados
+    
     st.divider()
     st.subheader("Estrategia Inicial:")
     
-    # 1. Cuotas a ofrecer (Franja azul con el texto solicitado en una nueva línea)
+    # 1. Solo la franja azul inicial
+    st.info(f"""
+        📅 **Ofrece {res['num_cuotas']} cuotas GRATIS (ver T&C)** Esto representa {res['calculo_tyc']:.1f}%
+    """)
     
-    st.info(
-        f"📅 **Ofrece {num_cuotas} cuota(s) GRATIS (ver T&C)**\n"
-        f"Esto representa {calculo_tyc:.1f}% de la prima"
-    )
+    # Inyección de estilo CSS exclusivo para el segundo botón (Color Magenta / Fuchsia)
+    st.markdown("""
+        <style>
+        div.stButton > button:first-child[key="btn_cierre"] {
+            background-color: #d63384 !important;
+            color: white !important;
+            border-color: #d63384 !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    # 2. El nuevo botón Magenta debajo de la franja azul
+    if st.button("¿Aún no cierras?", key="btn_cierre"):
+        st.session_state.mostrar_cierre = True
 
-    
-    # 2. Diferencia detectada debajo de la franja azul
-    st.metric(label="Diferencia detectada", value=f"${diferencia_monto:,.2f}")
-    
-    # 3. Recomendación final
-    st.write("### Recomendación final:")
-    st.write(f"**Posible descuento adicional: {pct_final}%**")
-    
-    st.warning("⚠️ Nota: El descuento afecta directamente la comisión del asesor.")
+    # 3. Sección desplegable (Aparece estrictamente al dar clic en el botón magenta)
+    if st.session_state.mostrar_cierre:
+        # Diferencia detectada debajo de la franja azul
+        st.metric(label="Diferencia detectada", value=f"${res['diferencia_monto']:,.2f}")
+        
+        # Recomendación final
+        st.write("### Recomendación final:")
+        st.write(f"**Posible descuento adicional: {res['pct_final']}%**")
+        
+        # Nota de advertencia en amarillo
+        st.warning("⚠️ Nota: El descuento afecta directamente la comisión del asesor.")
