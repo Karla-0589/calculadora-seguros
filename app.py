@@ -107,7 +107,7 @@ if "resultados" in st.session_state:
     res = st.session_state.resultados
     
     st.divider()
-    st.subheader("Estrategia Final:")
+    st.subheader("Estrategia Inicial:")
     
     # 1. Franja azul inicial con las cuotas y el porcentaje
     st.info(f"""
