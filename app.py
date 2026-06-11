@@ -81,12 +81,16 @@ if st.button("Generar Estrategia"):
     num_cuotas = 0
     origen_clean = str(origen_detectado).strip()
     
-    if anio == 2026:
-        num_cuotas = 2
-    elif origen_clean in ["Chino / Indio", "Europeo"] and anio < 2026:
-        num_cuotas = 2
-    else:
-        num_cuotas = 1
+    # --- Lógica anterior basada en año/origen (ANULADA - se conserva como referencia) ---
+    # if anio == 2026:
+    #     num_cuotas = 2
+    # elif origen_clean in ["Chino / Indio", "Europeo"] and anio < 2026:
+    #     num_cuotas = 2
+    # else:
+    #     num_cuotas = 1
+    
+    # Forzamos siempre 1 cuota gratis, sin importar marca ni año de fabricación
+    num_cuotas = 1
     
     # Cálculo para el texto de la franja azul: ((Prima/12) * num_cuotas) / Prima Anual
     if prima_pacifico > 0:
@@ -126,7 +130,7 @@ if "resultados" in st.session_state:
         - Cliente persona (DNI/CE)
         """)
         # Hipervínculo directo a la web de Pacífico
-        st.markdown("Si quieres ver los T&C completos da clic [aquí](https://www.pacifico.com.pe/miscelaneo/article/-/blogs/tyc-promocion-comercial-canales-directos-hasta-2-cuotas-gratis-mayo-2026)")
+        st.markdown("Si quieres ver los T&C completos da clic https://www.pacifico.com.pe/miscelaneo/article/-/blogs/tyc-promocion-comercial-canales-directos-hasta-2-cuotas-gratis-mayo-2026")
 
     st.write("") # Espacio visual en blanco
 
