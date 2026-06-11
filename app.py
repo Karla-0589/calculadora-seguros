@@ -130,7 +130,7 @@ if "resultados" in st.session_state:
         - Cliente persona (DNI/CE)
         """)
         # Hipervínculo directo a la web de Pacífico
-        st.markdown("Si quieres ver los T&C completos da clic https://www.pacifico.com.pe/miscelaneo/article/-/blogs/tyc-promocion-comercial-canales-directos-hasta-2-cuotas-gratis-mayo-2026")
+        st.markdown("Si quieres ver los T&C completos da clic https://www.pacifico.com.pe/miscelaneo/article/-/blogs/tyc-promocion-comercial-cuarta-cuota-gratis-canales-directos-junio-2026")
 
     st.write("") # Espacio visual en blanco
 
